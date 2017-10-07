@@ -6,12 +6,21 @@ import (
 	"github.com/Jacobious52/blockchainserver/blockchain"
 )
 
-type MineHandler struct {
+type mineHandler struct {
 	blockChainChan chan *blockchain.BlockChain
 }
 
-func (h MineHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h mineHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	bc := <-h.blockChainChan
-	w.Write([]byte("TODO: mine"))
+
+	lastBlock := bc.LastBlock()
+	lastProof := lastBlock.Proof
+	proof := bc.ProofOfWork(lastProof)
+
+	bc.NewTransaction("0", "id", 1)
+	bc.NewBlock(proof, lastBlock.Hash())
+
 	h.blockChainChan <- bc
+
+	w.Write([]byte("TODO: return mine result"))
 }

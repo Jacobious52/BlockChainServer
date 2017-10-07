@@ -5,10 +5,10 @@ import (
 	"net/http"
 )
 
-type WelcomeHandler struct {
+type welcomeHandler struct {
 	id string
 }
 
-func (h WelcomeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h welcomeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(fmt.Sprint("Welcome to the chain. This is node ", h.id)))
 }

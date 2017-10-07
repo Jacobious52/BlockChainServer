@@ -8,19 +8,19 @@ import (
 	"github.com/Jacobious52/blockchainserver/blockchain"
 )
 
-type ChainResponse struct {
-	chain []*blockchain.Block
-	len   int
+type chainResponse struct {
+	Chain []*blockchain.Block
+	Len   int
 }
 
-type ChainHandler struct {
+type chainHandler struct {
 	blockChainChan chan *blockchain.BlockChain
 }
 
-func (h ChainHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h chainHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	bc := <-h.blockChainChan
-	chain := bc.Chain()
-	bytes, err := json.Marshal(ChainResponse{chain, len(chain)})
+	chain := bc.Chain
+	bytes, err := json.Marshal(chainResponse{chain, len(chain)})
 	h.blockChainChan <- bc
 
 	if err != nil {

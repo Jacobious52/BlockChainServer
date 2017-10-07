@@ -39,9 +39,10 @@ func NewServer() Server {
 func (s Server) Run() {
 	s.blockChainChan <- s.blockChain
 
-	http.Handle("/", WelcomeHandler{s.nodeIdentifier})
-	http.Handle("/chain", ChainHandler{s.blockChainChan})
-	http.Handle("/mine", MineHandler{s.blockChainChan})
-	http.Handle("/transaction/new", NewTransactionHandler{s.blockChainChan})
+	http.Handle("/", welcomeHandler{s.nodeIdentifier})
+	http.Handle("/chain", chainHandler{s.blockChainChan})
+	http.Handle("/mine", mineHandler{s.blockChainChan})
+	http.Handle("/transaction/new", newTransactionHandler{s.blockChainChan})
+	http.Handle("/transactions", transactionsHandler{s.blockChainChan})
 	log.Fatalln(http.ListenAndServe("0.0.0.0:3000", nil))
 }

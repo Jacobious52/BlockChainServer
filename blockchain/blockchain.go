@@ -41,17 +41,17 @@ func (b *Block) JSON() []byte {
 	return data
 }
 
-// BlockChain is the main class containing the chain of blocks and transactions
+// BlockChain is the main class containing the Chain of blocks and transactions
 type BlockChain struct {
-	chain               []*Block
-	currentTransactions []*Transaction
+	Chain               []*Block
+	CurrentTransactions []*Transaction
 }
 
-// NewBlockChain creates and returns a new block chain
+// NewBlockChain creates and returns a new block Chain
 func NewBlockChain() *BlockChain {
 	bc := &BlockChain{
-		chain:               make([]*Block, 0),
-		currentTransactions: make([]*Transaction, 0),
+		Chain:               make([]*Block, 0),
+		CurrentTransactions: make([]*Transaction, 0),
 	}
 	// Create genisis block
 	bc.NewBlock(100, "1")
@@ -79,23 +79,23 @@ func (bc *BlockChain) ValidProof(lastProof, proof int64) bool {
 	return guessHash[:4] == "0000"
 }
 
-// NewBlock creates a new block and adds it to the block chain
+// NewBlock creates a new block and adds it to the block Chain
 func (bc *BlockChain) NewBlock(proof int64, previousHash string) *Block {
 	block := &Block{
-		Index:        int64(len(bc.chain)) + 1,
+		Index:        int64(len(bc.Chain)) + 1,
 		Timestamp:    time.Now().Unix(),
-		Transactions: bc.currentTransactions,
+		Transactions: bc.CurrentTransactions,
 		Proof:        proof,
 		PreviousHash: previousHash,
 	}
-	bc.currentTransactions = make([]*Transaction, 0)
-	bc.chain = append(bc.chain, block)
+	bc.CurrentTransactions = make([]*Transaction, 0)
+	bc.Chain = append(bc.Chain, block)
 	return block
 }
 
-// NewTransaction creates a new transaction ready to be put on the next block of the chain
+// NewTransaction creates a new transaction ready to be put on the next block of the Chain
 func (bc *BlockChain) NewTransaction(sender, recipient string, amount int64) int64 {
-	bc.currentTransactions = append(bc.currentTransactions, &Transaction{
+	bc.CurrentTransactions = append(bc.CurrentTransactions, &Transaction{
 		Sender:    sender,
 		Recipient: recipient,
 		Amount:    amount,
@@ -103,11 +103,7 @@ func (bc *BlockChain) NewTransaction(sender, recipient string, amount int64) int
 	return bc.LastBlock().Index + 1
 }
 
-func (bc *BlockChain) Chain() []*Block {
-	return bc.chain
-}
-
-// LastBlock returns the lastest block in the chain
+// LastBlock returns the lastest block in the Chain
 func (bc *BlockChain) LastBlock() *Block {
-	return bc.chain[len(bc.chain)-1]
+	return bc.Chain[len(bc.Chain)-1]
 }
