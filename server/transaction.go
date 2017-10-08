@@ -34,7 +34,10 @@ func (h newTransactionHandler) ServeHTTP(w http.ResponseWriter, r *http.Request)
 	index := bc.NewTransaction(transaction.Sender, transaction.Recipient, transaction.Amount)
 	h.blockChainChan <- bc
 
-	w.Write([]byte(fmt.Sprintln("Transaction will be added to Block", index)))
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+
+	w.Write([]byte(fmt.Sprintf("{\"Message\":\"Transaction will be added to Block %d\"}", index)))
 }
 
 type transactionsHandler struct {

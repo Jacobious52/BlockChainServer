@@ -41,7 +41,7 @@ func (s Server) Run() {
 
 	http.Handle("/", welcomeHandler{s.nodeIdentifier})
 	http.Handle("/chain", chainHandler{s.blockChainChan})
-	http.Handle("/mine", mineHandler{s.blockChainChan})
+	http.Handle("/mine", mineHandler{s.blockChainChan, s.nodeIdentifier})
 	http.Handle("/transaction/new", newTransactionHandler{s.blockChainChan})
 	http.Handle("/transactions", transactionsHandler{s.blockChainChan})
 	log.Fatalln(http.ListenAndServe("0.0.0.0:3000", nil))

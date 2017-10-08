@@ -8,7 +8,7 @@ import (
 	"github.com/Jacobious52/blockchainserver/blockchain"
 )
 
-type chainResponse struct {
+type ChainResponse struct {
 	Chain []*blockchain.Block
 	Len   int
 }
@@ -20,11 +20,14 @@ type chainHandler struct {
 func (h chainHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	bc := <-h.blockChainChan
 	chain := bc.Chain
-	bytes, err := json.Marshal(chainResponse{chain, len(chain)})
+	bytes, err := json.Marshal(ChainResponse{chain, len(chain)})
 	h.blockChainChan <- bc
 
 	if err != nil {
 		log.Println(err)
 	}
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
 	w.Write(bytes)
 }
