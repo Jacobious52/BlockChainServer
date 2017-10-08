@@ -6,6 +6,14 @@ import (
 	"github.com/Jacobious52/blockchainserver/blockchain"
 )
 
+type mineResponse struct {
+	message      string
+	index        int64
+	transactions []*blockchain.Transaction
+	proof        int64
+	previousHash string
+}
+
 type mineHandler struct {
 	blockChainChan chan *blockchain.BlockChain
 }
