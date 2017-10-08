@@ -36,7 +36,7 @@ func NewServer() Server {
 }
 
 // Run the server
-func (s Server) Run() {
+func (s Server) Run(port string) {
 	s.blockChainChan <- s.blockChain
 
 	http.Handle("/", welcomeHandler{s.nodeIdentifier})
@@ -44,5 +44,9 @@ func (s Server) Run() {
 	http.Handle("/mine", mineHandler{s.blockChainChan, s.nodeIdentifier})
 	http.Handle("/transaction/new", newTransactionHandler{s.blockChainChan})
 	http.Handle("/transactions", transactionsHandler{s.blockChainChan})
-	log.Fatalln(http.ListenAndServe("0.0.0.0:3000", nil))
+	http.Handle("/node/register", registerNodeHandler{s.blockChainChan})
+	http.Handle("/node/resolve", resolveNodeHandler{s.blockChainChan})
+
+	log.Println("Starting server on port", port)
+	log.Fatalln(http.ListenAndServe(fmt.Sprint("0.0.0.0:", port), nil))
 }

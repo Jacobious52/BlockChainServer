@@ -8,8 +8,6 @@ import (
 	"net/http"
 	"net/url"
 	"time"
-
-	"github.com/Jacobious52/blockchainserver/server"
 )
 
 // Transaction is the transaction in the blockchain
@@ -73,6 +71,9 @@ func NewBlockChain() *BlockChain {
 // RegisterNode registers a url for another node
 func (bc *BlockChain) RegisterNode(uri string) {
 	uri = url.PathEscape(uri)
+	if uri == "" {
+		return
+	}
 	bc.Nodes.insert(uri)
 }
 
@@ -88,6 +89,7 @@ func ValidChain(chain []*Block) bool {
 	for currentIndex < len(chain) {
 		currentBlock := chain[currentIndex]
 		if currentBlock.PreviousHash != lastBlock.Hash() {
+			log.Println("Invalid Chain at index ", currentBlock.Index)
 			return false
 		}
 		lastBlock = currentBlock
@@ -114,8 +116,12 @@ func (bc *BlockChain) ResolveConflicts() bool {
 			continue
 		}
 
-		var chainResponse server.ChainResponse
-		err = json.NewDecoder(r.Body).Decode(&chainResponse)
+		var chainResponse struct {
+			Chain []*Block
+			Len   int
+		}
+
+		err = json.NewDecoder(response.Body).Decode(&chainResponse)
 		if err != nil {
 			log.Println("Failed to decode node", node, ". Error:", err)
 			continue
