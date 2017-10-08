@@ -144,20 +144,21 @@ func (bc *BlockChain) ResolveConflicts() bool {
 /*
 ProofOfWork Algorithm:
 Ref: https://hackernoon.com/learn-blockchains-by-building-one-117428612f46
- - Find a number p' such that hash(pp') contains leading 4 zeroes, where p is the previous p'
+ - Find a number p' such that hash(pp'h') contains leading 4 zeroes, where p is the previous p' and h' is previous hash
  - p is the previous proof, and p' is the new proof
+ - Addition by me that the previous hash must be in the proof to ensure transactions not overwritten
 */
-func ProofOfWork(lastProof int64) int64 {
+func ProofOfWork(lastHash string, lastProof int64) int64 {
 	var proof int64
-	for !ValidProof(lastProof, proof) {
+	for !ValidProof(lastHash, lastProof, proof) {
 		proof++
 	}
 	return proof
 }
 
 // ValidProof Validates the Proof: Does hash(last_proof, proof) contain 4 leading zeroes?
-func ValidProof(lastProof, proof int64) bool {
-	guess := fmt.Sprint(lastProof, proof)
+func ValidProof(lastHash string, lastProof, proof int64) bool {
+	guess := fmt.Sprint(lastProof, proof, lastHash)
 	guessHash := fmt.Sprintf("%x", sha256.Sum256([]byte(guess)))
 	return guessHash[:4] == "0000"
 }
